@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery.js"></script>
+    <link href="/static/css/line_awesome.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:300,400,500,600" rel="stylesheet">
+</head>
+<body>
+<main>
+	<div class="container">
+		<h1>Fancy Search Box</h1>
+		<h2>Try below!</h2>
+		<div class="search-box">
+			<div class="search-icon"><i class="fa fa-search search-icon"></i></div>
+			<form action="" class="search-form">
+				<input type="text" placeholder="Search" id="search" autocomplete="off">
+			</form>
+			<svg class="search-border" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" viewBox="0 0 671 111" style="enable-background:new 0 0 671 111;"
+			 xml:space="preserve">
+              <path class="border" d="M335.5,108.5h-280c-29.3,0-53-23.7-53-53v0c0-29.3,23.7-53,53-53h280"/>
+              <path class="border" d="M335.5,108.5h280c29.3,0,53-23.7,53-53v0c0-29.3-23.7-53-53-53h-280"/>
+            </svg>
+			<div class="go-icon"><i class="fa fa-arrow-right"></i></div>
+            <div class="recomendations">
+{#                <div class="recomendationItem">Java</div>#}
+{#                <div class="recomendationItem">Java Machine</div>#}
+{#                <div class="recomendationItem">James</div>#}
+            </div>
+		</div>
+
+	</div>
+</main>
+<script>
+async function postData(url = '', data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  });
+  return await response.json(); // parses JSON response into native JavaScript objects
+}
+
+
+
+$(document).ready(function(){
+    $("#search").focus(function() {
+      $(".search-box").addClass("border-searching");
+      $(".search-icon").addClass("si-rotate");
+    });
+    $("#search").blur(function() {
+      $(".search-box").removeClass("border-searching");
+      $(".search-icon").removeClass("si-rotate");
+    });
+    $("#search").keyup(async function() {
+        if($(this).val().length > 0) {
+            $(".go-icon").addClass("go-in");
+            console.log("lalalla "+ $(this).val().length)
+            if( $(this).val().length < 3 ){
+                $(".recomendations").html("")
+                return
+            }
+
+            res = await postData("/api/search", {"search": $(this).val()})
+            str = ''
+            str_arr = res["search"].map(function (s) {
+                return `<div class="recomendationItem">${s}</div>`
+            })
+            $(".recomendations").html(
+                str_arr.join('')
+            )
+        }
+        else {
+          $(".go-icon").removeClass("go-in");
+        }
+    });
+    $(".go-icon").click(function(){
+      $(".search-form").submit();
+    });
+});
+
+</script>
+
+
+</body>
+</html>
