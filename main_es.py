@@ -22,6 +22,7 @@ mapping = {
                         "tokenizer": "projector_search_tokenizer",
                     },
                     "projector_search_analyzer": {
+                        "filter": ["lowercase", "stop", "trim"],
                         "tokenizer": "lowercase"
                     },
                 },
