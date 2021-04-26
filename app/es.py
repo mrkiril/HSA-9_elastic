@@ -51,18 +51,34 @@ async def search(elastic_search: AsyncElasticsearch, index, body):
 
 
 async def search_fuzzy(elastic_search: AsyncElasticsearch, index, search_string):
+    """
+    {
+          "query": {
+           "multi_match" : {
+              "query":      "Jon",
+              "type":       "cross_fields",
+              "analyzer":   "standard",
+              "fields":     [ "first", "last", "*.edge" ]
+            }
+          }
+        }
+    :param elastic_search:
+    :param index:
+    :param search_string:
+    :return:
+    """
     query = {
         "query": {
-            "fuzzy": {
-                "book_name": {
-                    "value": search_string,
-                    "boost": 1.0,
-                    "fuzziness": 4,
-                    "prefix_length": 2,
-                    "max_expansions": 100
+            "multi_match": {
+                "fields": ["book_name"],
+                "query": search_string,
+                "boost": 1.0,
+                "fuzziness": 4,
+                "prefix_length": 2,
+                "max_expansions": 100,
+                "analyzer": 'standard'
                 }
             }
         }
-    }
     return await search(elastic_search, index, query)
 
